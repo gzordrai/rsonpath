@@ -185,7 +185,7 @@ alias v := verify-quick
 alias verify := verify-full
 
 # Run all lints and checks required.
-verify-full: verify-quick test-full (build-bin "release")
+verify-full: verify-quick verify-msrv test-full (build-bin "release")
 
 # Run a quick formatting and compilation check.
 verify-quick: verify-fmt verify-check verify-doc verify-deny verify-bench verify-clippy
@@ -217,6 +217,13 @@ verify-doc $RUSTDOCFLAGS="--cfg docsrs -D warnings":
 # Verify formatting rules are not violated.
 verify-fmt:
     cargo fmt --all --check
+
+# Verify the declared MSRV is correct.
+verify-msrv:
+    -cargo install cargo-msrv
+    cargo msrv verify --path ./crates/rsonpath
+    cargo msrv verify --path ./crates/rsonpath-lib
+    cargo msrv verify --path ./crates/rsonpath-syntax
 
 # === CLEAN ===
 
